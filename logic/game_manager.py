@@ -90,6 +90,15 @@ class GameManager:
     def update(self, dt):
         """Update game state."""
         self.animation_time += dt / 1000.0
+
+        for star in self.stars[:]:
+            star['x'] += star['vx']
+            star['y'] += star['vy']
+            star['life'] -= 0.01
+            star['vy'] += 0.1
+        
+            if star['life'] <= 0:
+                self.stars.remove(star)
         
         if self.current_state == self.STATE_PLAYING and self.ui:
             self.ui.update(dt)
@@ -105,6 +114,8 @@ class GameManager:
             # Draw UI
             if self.ui:
                 self.ui.draw(self.screen)
+            if self.game_completed:
+                self.draw_stars(self.screen)
     
     def draw_gradient_background(self, screen):
         """Draw light gradient background."""
@@ -165,3 +176,41 @@ class GameManager:
     def complete_game(self):
         """Handle game completion."""
         self.game_completed = True
+        self.generate_celebration_stars()
+
+
+    def generate_celebration_stars(self):
+        """Generate stars for celebration animation."""
+        for _ in range(30):
+            self.stars.append({
+                'x': random.randint(100, Config.SCREEN_WIDTH - 100),
+                'y': random.randint(100, Config.SCREEN_HEIGHT - 100),
+                'vx': random.uniform(-2, 2),
+                'vy': random.uniform(-2, 2),
+                'size': random.randint(5, 15),
+                'color': random.choice([(255, 255, 100), (255, 200, 100), (255, 150, 150)]),
+                'life': 1.0
+            })
+
+    def draw_stars(self, screen):
+        """Draw celebration stars."""
+        for star in self.stars:
+            alpha = star['life']
+            size = int(star['size'] * alpha)
+            if size > 0:
+                color = tuple(int(c * alpha) for c in star['color'])
+                self.draw_star(screen, star['x'], star['y'], size, color)
+
+    def draw_star(self, screen, x, y, size, color):
+        """Draw a star shape."""
+        points = []
+        for i in range(10):
+            angle = i * math.pi / 5
+            if i % 2 == 0:
+                px = x + size * math.cos(angle)
+                py = y + size * math.sin(angle)
+            else:
+                px = x + (size * 0.4) * math.cos(angle)
+                py = y + (size * 0.4) * math.sin(angle)
+            points.append((px, py))
+        pygame.draw.polygon(screen, color, points)
