@@ -19,22 +19,6 @@ class UI:
         self.menu_button = None
 
         self.setup_ui()
-        
-    def setup_ui(self):
-        """Set up UI elements."""
-        # Calculator centered on screen
-        calc_width = 380
-        calc_height = 500
-        calc_x = (Config.SCREEN_WIDTH - calc_width) // 2
-        calc_y = (Config.SCREEN_HEIGHT - calc_height) // 2 - 50
-        
-        # Create menu button for now
-        self.menu_button = pygame.Rect(
-            calc_x,
-            calc_y + calc_height + 20,
-            180,
-            50
-        )
     
     def handle_event(self, event):
         """Handle UI events."""
@@ -60,19 +44,15 @@ class UI:
     
     def draw(self, surface):
         """Draw the UI."""
-        # Draw placeholder text for now
-        font = pygame.font.Font(None, 72)
-        text = font.render(f"Target: {self.game_manager.target_number}", True, (50, 50, 50))
-        rect = text.get_rect(center=(Config.SCREEN_WIDTH // 2, 100))
-        surface.blit(text, rect)
+        # Draw calculator
+        self.draw_calculator(surface)
         
         # Draw menu button
-        if self.menu_button:
-            pygame.draw.rect(surface, (200, 200, 200), self.menu_button)
-            font = pygame.font.Font(None, 36)
-            text = font.render("Back to Menu", True, (50, 50, 50))
-            text_rect = text.get_rect(center=self.menu_button.center)
-            surface.blit(text, text_rect)
+        self.menu_button.draw(surface)
+        
+        # Draw message
+        if self.message_timer > 0:
+            self.draw_message(surface)
 
     def setup_ui(self):
         """Set up UI elements."""
@@ -161,3 +141,59 @@ class UI:
                 self.game_manager.current_equation += '×'
             else:
                 self.game_manager.current_equation += value
+
+    def draw_calculator(self, surface):
+        """Draw the calculator."""
+        # Calculator background
+        calc_width = 380
+        calc_height = 500
+        calc_x = (Config.SCREEN_WIDTH - calc_width) // 2
+        calc_y = (Config.SCREEN_HEIGHT - calc_height) // 2 - 50
+        
+        calc_rect = pygame.Rect(calc_x, calc_y, calc_width, calc_height)
+        pygame.draw.rect(surface, (255, 255, 255), calc_rect, border_radius=20)
+        pygame.draw.rect(surface, (200, 200, 200), calc_rect, 3, border_radius=20)
+        
+        # Draw display
+        display_rect = pygame.Rect(
+            calc_x + 20,
+            calc_y + 20,
+            calc_width - 40,
+            70
+        )
+        pygame.draw.rect(surface, (250, 250, 250), display_rect, border_radius=10)
+        pygame.draw.rect(surface, (200, 200, 200), display_rect, 2, border_radius=10)
+        
+        # Display text
+        font = pygame.font.Font(None, 48)
+        if self.game_manager.current_equation:
+            text = self.game_manager.current_equation
+        else:
+            text = "0"
+        
+        # Truncate if too long
+        if len(text) > 15:
+            text = "..." + text[-12:]
+        
+        text_surface = font.render(text, True, (50, 50, 50))
+        text_rect = text_surface.get_rect(midright=(display_rect.right - 15, display_rect.centery))
+        surface.blit(text_surface, text_rect)
+        
+        # Draw calculator buttons
+        for button in self.calc_buttons:
+            button.draw(surface)
+
+    def draw_message(self, surface):
+        """Draw temporary message."""
+        font = pygame.font.Font(None, 36)
+        
+        color = (200, 50, 50) if self.message_type == "error" else (50, 200, 50)
+        message_surface = font.render(self.message, True, color)
+        message_rect = message_surface.get_rect(center=(Config.SCREEN_WIDTH // 2, Config.SCREEN_HEIGHT - 100))
+        
+        # Background
+        bg_rect = message_rect.inflate(40, 20)
+        pygame.draw.rect(surface, (255, 255, 255), bg_rect, border_radius=10)
+        pygame.draw.rect(surface, color, bg_rect, 2, border_radius=10)
+        
+        surface.blit(message_surface, message_rect)

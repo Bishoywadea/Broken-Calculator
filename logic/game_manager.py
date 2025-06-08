@@ -80,8 +80,11 @@ class GameManager:
         if self.current_state == self.STATE_MENU:
             self.menu.handle_event(event)
         elif self.current_state == self.STATE_PLAYING:
-            if self.ui:
-                self.ui.handle_event(event)
+            if self.ui.handle_event(event):
+                return
+            
+            if event.type == pygame.KEYDOWN:
+                self.handle_keyboard_input(event)
                 
     def return_to_menu(self):
         """Return to main menu."""
@@ -115,3 +118,80 @@ class GameManager:
             g = int(245 + (255 - 245) * ratio)
             b = 255
             pygame.draw.line(screen, (r, g, b), (0, y), (Config.SCREEN_WIDTH, y))
+
+    def handle_keyboard_input(self, event):
+        """Handle keyboard input for equation entry."""
+        if self.game_completed:
+            return
+            
+        if event.key == pygame.K_RETURN:
+            self.submit_equation()
+        elif event.key == pygame.K_BACKSPACE:
+            self.current_equation = self.current_equation[:-1]
+        elif event.key == pygame.K_ESCAPE:
+            self.current_equation = ""
+        else:
+            # Handle number and operator input
+            char = event.unicode
+            if char in "0123456789+-*/() ":
+                # Check if this character is broken
+                if self.is_button_broken(char):
+                    self.ui.show_message("That button is broken!", "error")
+                    return
+                    
+                # Replace * with × and / with ÷ for display
+                if char == "*":
+                    char = "×"
+                elif char == "/":
+                    char = "÷"
+                self.current_equation += char
+
+    def submit_equation(self):
+        """Submit the current equation for validation."""
+        if not self.current_equation.strip():
+            return
+        
+        # Convert display symbols back to Python operators
+        equation_for_eval = self.current_equation.replace("×", "*").replace("÷", "/")
+        
+        # Validate equation
+        result = self.equation_validator.validate(equation_for_eval, self.target_number)
+        
+        if result['valid']:
+            # Check if equation is unique
+            if not self.is_equation_unique(equation_for_eval):
+                self.ui.show_message("Equation already used!", "error")
+                return
+            
+            # Calculate score
+            score = self.score_calculator.calculate_score(equation_for_eval)
+            
+            # Add equation to list
+            self.equations.append({
+                'equation': self.current_equation,
+                'score': score
+            })
+            
+            self.total_score += score
+            self.current_equation = ""
+            
+            # Check if game is complete
+            if len(self.equations) >= 5:
+                self.complete_game()
+        else:
+            self.ui.show_message(result['error'], "error")
+
+    def is_equation_unique(self, equation):
+        """Check if equation is unique (not just reordered)."""
+        equation_normalized = equation.replace(" ", "")
+        for eq in self.equations:
+            if self.equation_validator.are_equations_equivalent(
+                equation_normalized, 
+                eq['equation'].replace("×", "*").replace("÷", "/").replace(" ", "")
+            ):
+                return False
+        return True
+
+    def complete_game(self):
+        """Handle game completion."""
+        self.game_completed = True
