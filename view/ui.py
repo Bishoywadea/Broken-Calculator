@@ -54,6 +54,9 @@ class UI:
         if self.message_timer > 0:
             self.draw_message(surface)
 
+        # Draw target with character
+        self.draw_target_section(surface)
+
     def setup_ui(self):
         """Set up UI elements."""
         # Calculator centered on screen
@@ -197,3 +200,33 @@ class UI:
         pygame.draw.rect(surface, color, bg_rect, 2, border_radius=10)
         
         surface.blit(message_surface, message_rect)
+
+    def draw_target_section(self, surface):
+        """Draw target number with character."""
+        # Position
+        section_x = 200
+        section_y = Config.SCREEN_HEIGHT // 2 - 150
+        
+        # Target label
+        font_label = pygame.font.Font(None, 36)
+        label_surface = font_label.render("Target:", True, (100, 100, 100))
+        label_rect = label_surface.get_rect(center=(section_x, section_y))
+        surface.blit(label_surface, label_rect)
+        
+        # Target number in circle
+        circle_y = section_y + 60
+        pygame.draw.circle(surface, (255, 230, 150), (section_x, circle_y), 50)
+        pygame.draw.circle(surface, (220, 180, 100), (section_x, circle_y), 50, 3)
+        
+        font_number = pygame.font.Font(None, 64)
+        number_surface = font_number.render(str(self.game_manager.target_number), True, (50, 50, 50))
+        number_rect = number_surface.get_rect(center=(section_x, circle_y))
+        surface.blit(number_surface, number_rect)
+
+    def draw_score(self, surface):
+        """Draw the total score."""
+        font = pygame.font.Font(None, 48)
+        score_text = f"Score: {self.game_manager.total_score}"
+        score_surface = font.render(score_text, True, (255, 215, 0))
+        score_rect = score_surface.get_rect(topright=(Config.SCREEN_WIDTH - 50, 50))
+        surface.blit(score_surface, score_rect)

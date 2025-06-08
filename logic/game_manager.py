@@ -83,9 +83,6 @@ class GameManager:
             if self.ui.handle_event(event):
                 return
             
-            if event.type == pygame.KEYDOWN:
-                self.handle_keyboard_input(event)
-                
     def return_to_menu(self):
         """Return to main menu."""
         self.current_state = self.STATE_MENU
@@ -118,33 +115,6 @@ class GameManager:
             g = int(245 + (255 - 245) * ratio)
             b = 255
             pygame.draw.line(screen, (r, g, b), (0, y), (Config.SCREEN_WIDTH, y))
-
-    def handle_keyboard_input(self, event):
-        """Handle keyboard input for equation entry."""
-        if self.game_completed:
-            return
-            
-        if event.key == pygame.K_RETURN:
-            self.submit_equation()
-        elif event.key == pygame.K_BACKSPACE:
-            self.current_equation = self.current_equation[:-1]
-        elif event.key == pygame.K_ESCAPE:
-            self.current_equation = ""
-        else:
-            # Handle number and operator input
-            char = event.unicode
-            if char in "0123456789+-*/() ":
-                # Check if this character is broken
-                if self.is_button_broken(char):
-                    self.ui.show_message("That button is broken!", "error")
-                    return
-                    
-                # Replace * with × and / with ÷ for display
-                if char == "*":
-                    char = "×"
-                elif char == "/":
-                    char = "÷"
-                self.current_equation += char
 
     def submit_equation(self):
         """Submit the current equation for validation."""
