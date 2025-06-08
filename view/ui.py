@@ -57,6 +57,12 @@ class UI:
         # Draw target with character
         self.draw_target_section(surface)
 
+        # Draw equations panel
+        self.draw_equations_panel(surface)
+
+        # Draw score
+        self.draw_score(surface)
+
     def setup_ui(self):
         """Set up UI elements."""
         # Calculator centered on screen
@@ -230,3 +236,66 @@ class UI:
         score_surface = font.render(score_text, True, (255, 215, 0))
         score_rect = score_surface.get_rect(topright=(Config.SCREEN_WIDTH - 50, 50))
         surface.blit(score_surface, score_rect)
+
+    def draw_equations_panel(self, surface):
+        """Draw the equations panel."""
+        panel_width = 300
+        panel_height = 400
+        panel_x = Config.SCREEN_WIDTH - panel_width - 100
+        panel_y = (Config.SCREEN_HEIGHT - panel_height) // 2 - 50
+        
+        # Panel background
+        panel_rect = pygame.Rect(panel_x, panel_y, panel_width, panel_height)
+        pygame.draw.rect(surface, (255, 255, 255), panel_rect, border_radius=20)
+        pygame.draw.rect(surface, (200, 200, 200), panel_rect, 3, border_radius=20)
+        
+        # Title
+        font_title = pygame.font.Font(None, 36)
+        title_surface = font_title.render("Your Equations", True, (50, 50, 50))
+        title_rect = title_surface.get_rect(center=(panel_rect.centerx, panel_rect.top + 30))
+        surface.blit(title_surface, title_rect)
+        
+        # Draw equation slots
+        slot_height = 60
+        slot_margin = 10
+        start_y = panel_rect.top + 70
+        
+        font_eq = pygame.font.Font(None, 28)
+        font_score = pygame.font.Font(None, 24)
+        
+        for i in range(5):
+            slot_y = start_y + i * (slot_height + slot_margin)
+            slot_rect = pygame.Rect(
+                panel_rect.left + 20,
+                slot_y,
+                panel_rect.width - 40,
+                slot_height
+            )
+            
+            if i < len(self.game_manager.equations):
+                # Filled slot
+                eq_data = self.game_manager.equations[i]
+                pygame.draw.rect(surface, (240, 255, 240), slot_rect, border_radius=10)
+                pygame.draw.rect(surface, (150, 220, 150), slot_rect, 2, border_radius=10)
+                
+                # Equation
+                eq_text = f"{eq_data['equation']} = {self.game_manager.target_number}"
+                eq_surface = font_eq.render(eq_text, True, (50, 50, 50))
+                eq_rect = eq_surface.get_rect(midleft=(slot_rect.left + 10, slot_rect.centery - 10))
+                surface.blit(eq_surface, eq_rect)
+                
+                # Score
+                score_text = f"+{eq_data['score']} pts"
+                score_surface = font_score.render(score_text, True, (255, 180, 0))
+                score_rect = score_surface.get_rect(midleft=(slot_rect.left + 10, slot_rect.centery + 15))
+                surface.blit(score_surface, score_rect)
+            else:
+                # Empty slot
+                pygame.draw.rect(surface, (250, 250, 250), slot_rect, border_radius=10)
+                pygame.draw.rect(surface, (220, 220, 220), slot_rect, 2, border_radius=10)
+                
+                # Placeholder
+                placeholder = f"Equation {i + 1}"
+                placeholder_surface = font_eq.render(placeholder, True, (200, 200, 200))
+                placeholder_rect = placeholder_surface.get_rect(center=slot_rect.center)
+                surface.blit(placeholder_surface, placeholder_rect)
