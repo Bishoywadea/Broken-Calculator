@@ -66,6 +66,10 @@ class UI:
         # Draw score
         self.draw_score(surface)
 
+        # Draw Completion screen
+        if self.game_manager.game_completed:
+            self.draw_completion_screen(surface)
+
     def setup_ui(self):
         """Set up UI elements."""
         # Calculator centered on screen
@@ -312,3 +316,53 @@ class UI:
                 placeholder_surface = font_eq.render(placeholder, True, (200, 200, 200))
                 placeholder_rect = placeholder_surface.get_rect(center=slot_rect.center)
                 surface.blit(placeholder_surface, placeholder_rect)
+
+    def draw_completion_screen(self, surface):
+        """Draw game completion overlay."""
+        # Semi-transparent overlay
+        overlay = pygame.Surface((Config.SCREEN_WIDTH, Config.SCREEN_HEIGHT))
+        overlay.set_alpha(180)
+        overlay.fill((0, 0, 0))
+        surface.blit(overlay, (0, 0))
+        
+        # Completion panel
+        panel_width = 600
+        panel_height = 400
+        panel_rect = pygame.Rect(
+            (Config.SCREEN_WIDTH - panel_width) // 2,
+            (Config.SCREEN_HEIGHT - panel_height) // 2,
+            panel_width,
+            panel_height
+        )
+        
+        # Panel background
+        pygame.draw.rect(surface, (255, 255, 255), panel_rect, border_radius=30)
+        pygame.draw.rect(surface, (255, 215, 0), panel_rect, 4, border_radius=30)
+        
+        # Title
+        font_title = pygame.font.Font(None, 72)
+        title_surface = font_title.render("Excellent!", True, (50, 200, 50))
+        title_rect = title_surface.get_rect(center=(panel_rect.centerx, panel_rect.top + 80))
+        surface.blit(title_surface, title_rect)
+        
+        # Score display
+        font_large = pygame.font.Font(None, 56)
+        font_medium = pygame.font.Font(None, 42)
+        
+        score_surface = font_large.render(f"Final Score: {self.game_manager.total_score}", 
+                                        True, (255, 180, 0))
+        score_rect = score_surface.get_rect(center=(panel_rect.centerx, panel_rect.centery))
+        surface.blit(score_surface, score_rect)
+        
+        # Difficulty
+        difficulty_text = f"Difficulty: {self.game_manager.difficulty.capitalize()}"
+        diff_surface = font_medium.render(difficulty_text, True, (100, 100, 100))
+        diff_rect = diff_surface.get_rect(center=(panel_rect.centerx, panel_rect.centery + 60))
+        surface.blit(diff_surface, diff_rect)
+        
+        # Broken buttons count
+        broken_count = len(self.game_manager.broken_buttons)
+        broken_text = f"With {broken_count} broken buttons!"
+        broken_surface = font_medium.render(broken_text, True, (200, 100, 100))
+        broken_rect = broken_surface.get_rect(center=(panel_rect.centerx, panel_rect.centery + 110))
+        surface.blit(broken_surface, broken_rect)
