@@ -109,7 +109,6 @@ class main:
                 _("2. Use +, -, ×, ÷ operations."),
                 _("3. Each equation must be unique."),
                 _("4. More complex equations score higher!"),
-                _("5. Use keyboard to type numbers and operations.")
             ]
         ]
         
