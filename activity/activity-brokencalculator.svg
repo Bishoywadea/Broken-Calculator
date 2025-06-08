@@ -1,0 +1,65 @@
+<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+  
+  <!-- Shadow -->
+  <path d="M 80 360 L 300 360 L 330 50 L 110 50 Z" fill="#00000020" transform="rotate(-5 200 200)"/>
+  
+  <!-- Left calculator half -->
+  <g id="left-half" transform="rotate(-8 150 200)">
+    <!-- Calculator body -->
+    <path d="M 60 40 L 60 340 L 180 340 L 200 320 L 185 300 L 195 280 L 185 260 L 195 240 L 185 220 L 195 200 L 185 180 L 195 160 L 185 140 L 195 120 L 185 100 L 195 80 L 180 40 Z" 
+          fill="#2E7CD6" stroke="#1A5490" stroke-width="4"/>
+    
+    <!-- Screen -->
+    <rect x="75" y="60" width="95" height="40" fill="#D0D0D0" rx="2"/>
+    
+    <!-- Red strip -->
+    <rect x="75" y="110" width="95" height="20" fill="#E85D75"/>
+    
+    <!-- Button rows -->
+    <!-- Row 1 -->
+    <rect x="75" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    <rect x="125" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    
+    <!-- Row 2 -->
+    <rect x="75" y="190" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    <rect x="125" y="190" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    
+    <!-- Row 3 -->
+    <rect x="75" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    <rect x="125" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    
+    <!-- Row 4 -->
+    <rect x="75" y="270" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    <rect x="125" y="270" width="40" height="30" fill="#B0B0B0" rx="2"/>
+  </g>
+  
+  <!-- Right calculator half -->
+  <g id="right-half" transform="rotate(5 250 200)">
+    <!-- Calculator body -->
+    <path d="M 195 80 L 210 100 L 200 120 L 210 140 L 200 160 L 210 180 L 200 200 L 210 220 L 200 240 L 210 260 L 200 280 L 210 300 L 200 320 L 220 340 L 340 340 L 340 40 L 220 40 Z" 
+          fill="#2E7CD6" stroke="#1A5490" stroke-width="4"/>
+    
+    <!-- Screen -->
+    <rect x="230" y="60" width="95" height="40" fill="#D0D0D0" rx="2"/>
+    
+    <!-- Button rows -->
+    <!-- Row 1 -->
+    <rect x="235" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    <rect x="285" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    
+    <!-- Row 2 -->
+    <rect x="235" y="190" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    <rect x="285" y="190" width="40" height="30" fill="#4B3F8C" rx="2"/>
+    
+    <!-- Row 3 -->
+    <rect x="235" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    <rect x="285" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    
+    <!-- Row 4 -->
+    <rect x="235" y="270" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    <rect x="285" y="270" width="40" height="30" fill="#E85D75" rx="2"/>
+    
+    <!-- Row 5 -->
+    <rect x="235" y="310" width="90" height="20" fill="#4B3F8C" rx="2"/>
+  </g>
+</svg>

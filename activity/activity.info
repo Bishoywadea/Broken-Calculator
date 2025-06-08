@@ -1,0 +1,8 @@
+[Activity]
+name = BrokenCalculator
+activity_version = 1
+bundle_id = org.sugarlabs.BrokenCalculator
+exec = sugar-activity3 activity.BrokenCalculator
+icon = activity-brokencalculator
+license = GPLv2+
+repository = https://github.com/Bishoywadea/Broken-Calculator.git
