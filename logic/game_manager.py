@@ -3,6 +3,7 @@ import random
 import math
 from view.config import Config
 from view.menu import Menu
+from view.ui import UI
 from logic.equation_validator import EquationValidator
 from logic.score_calculator import ScoreCalculator
 from logic.broken_button_validator import BrokenButtonValidator
@@ -67,6 +68,9 @@ class GameManager:
         self.game_completed = False
         self.stars = []
         
+        # Initialize UI
+        self.ui = UI(self)
+        
     def is_button_broken(self, value):
         """Check if a button is broken."""
         return value in self.broken_buttons
@@ -75,10 +79,20 @@ class GameManager:
         """Handle game events."""
         if self.current_state == self.STATE_MENU:
             self.menu.handle_event(event)
+        elif self.current_state == self.STATE_PLAYING:
+            if self.ui:
+                self.ui.handle_event(event)
+                
+    def return_to_menu(self):
+        """Return to main menu."""
+        self.current_state = self.STATE_MENU
             
     def update(self, dt):
         """Update game state."""
         self.animation_time += dt / 1000.0
+        
+        if self.current_state == self.STATE_PLAYING and self.ui:
+            self.ui.update(dt)
         
     def render(self):
         """Render the game."""
@@ -87,6 +101,10 @@ class GameManager:
         elif self.current_state == self.STATE_PLAYING:
             # Draw light gradient background
             self.draw_gradient_background(self.screen)
+            
+            # Draw UI
+            if self.ui:
+                self.ui.draw(self.screen)
     
     def draw_gradient_background(self, screen):
         """Draw light gradient background."""
