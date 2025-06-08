@@ -10,13 +10,21 @@ class Menu:
         self.font_button = pygame.font.Font(None, 56)
         self.font_desc = pygame.font.Font(None, 42)
         
+        # Menu states
+        self.STATE_MAIN = "main"
+        self.STATE_LEVELS = "levels"
+        self.STATE_SETTINGS = "settings"
+        self.current_state = self.STATE_MAIN
+        
         # Animation
         self.animation_time = 0
         self.stars = []
         self.generate_stars()
         
         # Buttons
+        self.main_buttons = []
         self.difficulty_buttons = []
+        self.back_button = None
         self.setup_buttons()
         
     def generate_stars(self):
@@ -30,11 +38,35 @@ class Menu:
             })
     
     def setup_buttons(self):
-        """Set up difficulty buttons."""
+        """Set up all buttons."""
         button_width = 300
         button_height = 80
         button_spacing = 30
         
+        # Main menu buttons
+        main_options = [
+            {'text': 'Play', 'action': 'levels'},
+            {'text': 'Settings', 'action': 'settings'}
+        ]
+        
+        start_y = Config.SCREEN_HEIGHT // 2 - (len(main_options) * (button_height + button_spacing)) // 2
+        
+        for i, option in enumerate(main_options):
+            y_pos = start_y + i * (button_height + button_spacing)
+            self.main_buttons.append({
+                'rect': pygame.Rect(
+                    (Config.SCREEN_WIDTH - button_width) // 2,
+                    y_pos,
+                    button_width,
+                    button_height
+                ),
+                'text': option['text'],
+                'action': option['action'],
+                'color': (100, 200, 255),
+                'hovered': False
+            })
+        
+        # Difficulty buttons (same as before)
         difficulties = [
             {'name': 'Easy', 'color': (100, 255, 100), 'desc': 'Target: 10-50'},
             {'name': 'Medium', 'color': (255, 255, 100), 'desc': 'Target: 50-100'},
@@ -57,21 +89,51 @@ class Menu:
                 'desc': diff['desc'],
                 'hovered': False
             })
+        
+        # Back button
+        self.back_button = {
+            'rect': pygame.Rect(50, Config.SCREEN_HEIGHT - 100, 150, 50),
+            'text': 'Back',
+            'color': (150, 150, 150),
+            'hovered': False
+        }
     
     def handle_event(self, event):
         """Handle menu events."""
         if event.type == pygame.MOUSEMOTION:
             mouse_pos = event.pos
-            for button in self.difficulty_buttons:
-                button['hovered'] = button['rect'].collidepoint(mouse_pos)
-                
+            
+            if self.current_state == self.STATE_MAIN:
+                for button in self.main_buttons:
+                    button['hovered'] = button['rect'].collidepoint(mouse_pos)
+            elif self.current_state == self.STATE_LEVELS:
+                for button in self.difficulty_buttons:
+                    button['hovered'] = button['rect'].collidepoint(mouse_pos)
+                self.back_button['hovered'] = self.back_button['rect'].collidepoint(mouse_pos)
+                    
         elif event.type == pygame.MOUSEBUTTONDOWN:
             if event.button == 1:
                 mouse_pos = event.pos
-                for button in self.difficulty_buttons:
-                    if button['rect'].collidepoint(mouse_pos):
-                        self.game_manager.start_level(button['difficulty'])
+                
+                if self.current_state == self.STATE_MAIN:
+                    for button in self.main_buttons:
+                        if button['rect'].collidepoint(mouse_pos):
+                            if button['action'] == 'levels':
+                                self.current_state = self.STATE_LEVELS
+                            elif button['action'] == 'settings':
+                                self.current_state = self.STATE_SETTINGS
+                            return True
+                            
+                elif self.current_state == self.STATE_LEVELS:
+                    for button in self.difficulty_buttons:
+                        if button['rect'].collidepoint(mouse_pos):
+                            self.game_manager.start_level(button['difficulty'])
+                            return True
+                    
+                    if self.back_button['rect'].collidepoint(mouse_pos):
+                        self.current_state = self.STATE_MAIN
                         return True
+                        
         return False
     
     def update(self):
@@ -98,12 +160,62 @@ class Menu:
         # Draw title
         self.draw_title(screen)
         
-        # Draw subtitle
-        self.draw_subtitle(screen)
+        if self.current_state == self.STATE_MAIN:
+            # Draw main menu
+            for button in self.main_buttons:
+                self.draw_main_button(screen, button)
+                
+        elif self.current_state == self.STATE_LEVELS:
+            # Draw subtitle
+            self.draw_subtitle(screen)
+            
+            # Draw difficulty buttons
+            for button in self.difficulty_buttons:
+                self.draw_button(screen, button)
+            
+            # Draw back button
+            self.draw_back_button(screen)
+    
+    def draw_main_button(self, screen, button):
+        """Draw a main menu button."""
+        rect = button['rect']
+        color = button['color']
         
-        # Draw difficulty buttons
-        for button in self.difficulty_buttons:
-            self.draw_button(screen, button)
+        # Hover effect
+        if button['hovered']:
+            rect = rect.inflate(10, 10)
+            color = tuple(min(255, c + 30) for c in color)
+        
+        # Shadow
+        shadow_rect = rect.copy()
+        shadow_rect.x += 4
+        shadow_rect.y += 4
+        pygame.draw.rect(screen, (30, 30, 30), shadow_rect, border_radius=15)
+        
+        # Button
+        pygame.draw.rect(screen, color, rect, border_radius=15)
+        pygame.draw.rect(screen, (0, 0, 0), rect, 3, border_radius=15)
+        
+        # Text
+        text_surface = self.font_button.render(button['text'], True, (0, 0, 0))
+        text_rect = text_surface.get_rect(center=rect.center)
+        screen.blit(text_surface, text_rect)
+    
+    def draw_back_button(self, screen):
+        """Draw the back button."""
+        rect = self.back_button['rect']
+        color = self.back_button['color']
+        
+        if self.back_button['hovered']:
+            color = (200, 200, 200)
+        
+        pygame.draw.rect(screen, color, rect, border_radius=10)
+        pygame.draw.rect(screen, (0, 0, 0), rect, 2, border_radius=10)
+        
+        font = pygame.font.Font(None, 36)
+        text = font.render(self.back_button['text'], True, (0, 0, 0))
+        text_rect = text.get_rect(center=rect.center)
+        screen.blit(text, text_rect)
     
     def draw_gradient_background(self, screen):
         """Draw gradient background."""
