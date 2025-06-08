@@ -113,8 +113,8 @@ class main:
         ]
         
         self.help_pos = pygame.Rect(
-            Config.SCREEN_WIDTH - 80,
-            20,
+            (2 * Config.SCREEN_WIDTH ),
+            (Config.SCREEN_HEIGHT * 0.1),
             80,
             80,
         )
