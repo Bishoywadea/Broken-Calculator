@@ -1,6 +1,11 @@
 import pygame
+import random
+import math
 from view.config import Config
 from view.menu import Menu
+from logic.equation_validator import EquationValidator
+from logic.score_calculator import ScoreCalculator
+from logic.broken_button_validator import BrokenButtonValidator
 
 class GameManager:
     def __init__(self):
@@ -20,13 +25,51 @@ class GameManager:
         self.menu = Menu(self)
         
         # Game components
+        self.ui = None
+        self.target_number = 0
         self.difficulty = "easy"
+        self.equations = []
+        self.current_equation = ""
+        self.equation_validator = EquationValidator()
+        self.score_calculator = ScoreCalculator()
+        self.broken_validator = BrokenButtonValidator()
+        self.total_score = 0
+        self.game_completed = False
+        self.animation_time = 0
+        self.stars = []
+        self.broken_buttons = []
         
     def start_level(self, difficulty):
         """Start a new game with selected difficulty."""
         self.difficulty = difficulty
         self.current_state = self.STATE_PLAYING
-        print(f"Starting {difficulty} level")
+        
+        # Generate target number based on difficulty
+        if difficulty == "easy":
+            self.target_number = random.randint(10, 50)
+            broken_count = 3
+        elif difficulty == "medium":
+            self.target_number = random.randint(50, 100)
+            broken_count = 5
+        else:  # hard
+            self.target_number = random.randint(100, 200)
+            broken_count = 7
+        
+        # Generate broken buttons ensuring puzzle is solvable
+        self.broken_buttons = self.broken_validator.generate_broken_buttons(
+            self.target_number, broken_count
+        )
+        
+        # Reset game state
+        self.equations = []
+        self.current_equation = ""
+        self.total_score = 0
+        self.game_completed = False
+        self.stars = []
+        
+    def is_button_broken(self, value):
+        """Check if a button is broken."""
+        return value in self.broken_buttons
         
     def handle_event(self, event):
         """Handle game events."""
@@ -35,16 +78,22 @@ class GameManager:
             
     def update(self, dt):
         """Update game state."""
-        pass
-    
+        self.animation_time += dt / 1000.0
+        
     def render(self):
         """Render the game."""
         if self.current_state == self.STATE_MENU:
             self.menu.draw(self.screen)
         elif self.current_state == self.STATE_PLAYING:
-            # For now, just show a placeholder
-            self.screen.fill((240, 245, 255))
-            font = pygame.font.Font(None, 72)
-            text = font.render(f"{self.difficulty.capitalize()} Game", True, (50, 50, 50))
-            rect = text.get_rect(center=(Config.SCREEN_WIDTH // 2, Config.SCREEN_HEIGHT // 2))
-            self.screen.blit(text, rect)
+            # Draw light gradient background
+            self.draw_gradient_background(self.screen)
+    
+    def draw_gradient_background(self, screen):
+        """Draw light gradient background."""
+        for y in range(Config.SCREEN_HEIGHT):
+            ratio = y / Config.SCREEN_HEIGHT
+            # Light gradient
+            r = int(240 + (250 - 240) * ratio)
+            g = int(245 + (255 - 245) * ratio)
+            b = 255
+            pygame.draw.line(screen, (r, g, b), (0, y), (Config.SCREEN_WIDTH, y))
