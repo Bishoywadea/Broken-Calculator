@@ -17,6 +17,9 @@ class UI:
         self.message_timer = 0
         self.character_animation = 0
         self.menu_button = None
+        self.character_image = pygame.image.load("assets/images/teacher.png").convert_alpha()
+        self.character_image = pygame.transform.scale(self.character_image, (100, 150))
+
 
         self.setup_ui()
     
@@ -228,6 +231,16 @@ class UI:
         number_surface = font_number.render(str(self.game_manager.target_number), True, (50, 50, 50))
         number_rect = number_surface.get_rect(center=(section_x, circle_y))
         surface.blit(number_surface, number_rect)
+
+        # Draw character
+        self.draw_character(surface, section_x, circle_y + 100)
+
+
+    def draw_character(self, surface, x, y):
+        """Draw the mascot character from image."""
+        # Center the image at the given position
+        rect = self.character_image.get_rect(center=(x, y))
+        surface.blit(self.character_image, rect)
 
     def draw_score(self, surface):
         """Draw the total score."""
