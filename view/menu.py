@@ -97,6 +97,17 @@ class Menu:
             'color': (150, 150, 150),
             'hovered': False
         }
+
+        # Theme toggle button
+        self.theme_toggle = {
+        'rect': pygame.Rect(
+            (Config.SCREEN_WIDTH - 400) // 2,
+            Config.SCREEN_HEIGHT // 2 - 50,
+            400,
+            100
+        ),
+        'hovered': False
+        }
     
     def handle_event(self, event):
         """Handle menu events."""
@@ -109,6 +120,9 @@ class Menu:
             elif self.current_state == self.STATE_LEVELS:
                 for button in self.difficulty_buttons:
                     button['hovered'] = button['rect'].collidepoint(mouse_pos)
+                self.back_button['hovered'] = self.back_button['rect'].collidepoint(mouse_pos)
+            elif self.current_state == self.STATE_SETTINGS:
+                self.theme_toggle['hovered'] = self.theme_toggle['rect'].collidepoint(mouse_pos)
                 self.back_button['hovered'] = self.back_button['rect'].collidepoint(mouse_pos)
                     
         elif event.type == pygame.MOUSEBUTTONDOWN:
@@ -129,6 +143,15 @@ class Menu:
                         if button['rect'].collidepoint(mouse_pos):
                             self.game_manager.start_level(button['difficulty'])
                             return True
+                    
+                    if self.back_button['rect'].collidepoint(mouse_pos):
+                        self.current_state = self.STATE_MAIN
+                        return True
+                
+                elif self.current_state == self.STATE_SETTINGS:
+                    if self.theme_toggle['rect'].collidepoint(mouse_pos):
+                        Config.toggle_theme()
+                        return True
                     
                     if self.back_button['rect'].collidepoint(mouse_pos):
                         self.current_state = self.STATE_MAIN
@@ -172,6 +195,13 @@ class Menu:
             # Draw difficulty buttons
             for button in self.difficulty_buttons:
                 self.draw_button(screen, button)
+            
+            # Draw back button
+            self.draw_back_button(screen)
+            
+        elif self.current_state == self.STATE_SETTINGS:
+            # Draw settings
+            self.draw_settings(screen)
             
             # Draw back button
             self.draw_back_button(screen)
@@ -283,3 +313,42 @@ class Menu:
         desc_surface = pygame.font.Font(None, 28).render(button['desc'], True, (50, 50, 50))
         desc_rect = desc_surface.get_rect(center=(rect.centerx, rect.centery + 20))
         screen.blit(desc_surface, desc_rect)
+    
+    def draw_settings(self, screen):
+        """Draw settings screen."""
+        # Settings title
+        font = pygame.font.Font(None, 56)
+        title = font.render("Settings", True, (255, 255, 255))
+        title_rect = title.get_rect(center=(Config.SCREEN_WIDTH // 2, 200))
+        screen.blit(title, title_rect)
+        
+        # Theme toggle
+        rect = self.theme_toggle['rect']
+        
+        # Background
+        bg_color = (80, 80, 100) if self.theme_toggle['hovered'] else (60, 60, 80)
+        pygame.draw.rect(screen, bg_color, rect, border_radius=20)
+        pygame.draw.rect(screen, (255, 255, 255), rect, 3, border_radius=20)
+        
+        # Label
+        label_font = pygame.font.Font(None, 42)
+        label = label_font.render("Theme:", True, (255, 255, 255))
+        label_rect = label.get_rect(midleft=(rect.left + 20, rect.centery))
+        screen.blit(label, label_rect)
+        
+        # Toggle switch
+        switch_rect = pygame.Rect(rect.right - 120, rect.centery - 25, 100, 50)
+        switch_color = (100, 200, 100) if Config.DARK_THEME else (200, 200, 200)
+        pygame.draw.rect(screen, switch_color, switch_rect, border_radius=25)
+        pygame.draw.rect(screen, (255, 255, 255), switch_rect, 2, border_radius=25)
+        
+        # Toggle circle
+        circle_x = switch_rect.right - 25 if Config.DARK_THEME else switch_rect.left + 25
+        pygame.draw.circle(screen, (255, 255, 255), (circle_x, switch_rect.centery), 20)
+        
+        # Theme text
+        theme_text = "Dark" if Config.DARK_THEME else "Light"
+        theme_font = pygame.font.Font(None, 36)
+        theme_surface = theme_font.render(theme_text, True, (255, 255, 255))
+        theme_rect = theme_surface.get_rect(center=(switch_rect.centerx, rect.centery + 40))
+        screen.blit(theme_surface, theme_rect)
