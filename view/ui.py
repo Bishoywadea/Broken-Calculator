@@ -1,6 +1,12 @@
 import pygame
 from view.config import Config
 
+import pygame
+from view.config import Config
+
+from view.calc_button import CalcButton
+
+
 class UI:
     def __init__(self, game_manager):
         self.game_manager = game_manager
