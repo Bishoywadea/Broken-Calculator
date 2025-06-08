@@ -1,5 +1,6 @@
 import pygame
 import sys
+from logic.game_manager import GameManager
 from view.config import Config
 import gi
 
@@ -46,6 +47,12 @@ class main:
                     self.show_help = not self.show_help
                 elif self.show_help:
                     self.show_help = False
+                else:
+                    if self.game:
+                        self.game.handle_event(event)
+            else:
+                if self.game:
+                    self.game.handle_event(event)
     
     def draw_help(self, screen):
         pygame.draw.circle(
@@ -113,6 +120,8 @@ class main:
             80,
         )
         
+        self.game = GameManager()
+        
         if self.canvas is not None:
             self.canvas.grab_focus()
         
@@ -127,16 +136,10 @@ class main:
             
             self.check_events()
             
-            # Draw gradient background
-            screen = pygame.display.get_surface()
-            for y in range(Config.SCREEN_HEIGHT):
-                ratio = y / Config.SCREEN_HEIGHT
-                r = int(240 + (250 - 240) * ratio)
-                g = int(245 + (255 - 245) * ratio)
-                b = 255
-                pygame.draw.line(screen, (r, g, b), (0, y), (Config.SCREEN_WIDTH, y))
-            
-            self.draw_help(screen)
+            if self.game:
+                self.game.update(dt)
+                self.game.render()
+                self.draw_help(pygame.display.get_surface())
                 
             pygame.display.flip()
         
