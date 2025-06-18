@@ -1,65 +1,60 @@
-<svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
-  
-  <!-- Shadow -->
-  <path d="M 80 360 L 300 360 L 330 50 L 110 50 Z" fill="#00000020" transform="rotate(-5 200 200)"/>
-  
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd" [
+<!ENTITY stroke_color "#666666">
+<!ENTITY fill_color "#FFFFFF">
+]>
+<svg width="55" height="55" viewBox="0 0 55 55" xmlns="http://www.w3.org/2000/svg">
   <!-- Left calculator half -->
-  <g id="left-half" transform="rotate(-8 150 200)">
-    <!-- Calculator body -->
-    <path d="M 60 40 L 60 340 L 180 340 L 200 320 L 185 300 L 195 280 L 185 260 L 195 240 L 185 220 L 195 200 L 185 180 L 195 160 L 185 140 L 195 120 L 185 100 L 195 80 L 180 40 Z" 
-          fill="#2E7CD6" stroke="#1A5490" stroke-width="4"/>
+  <g transform="translate(-1,0) rotate(-12 20 27.5)">
+    <!-- Left body with jagged edge -->
+    <path d="M 6 3 L 6 47 L 24 47 L 27 44 L 25 42 L 27 40 L 25 38 L 27 36 L 25 34 L 27 32 L 25 30 L 27 28 L 25 26 L 27 24 L 25 22 L 27 20 L 25 18 L 27 16 L 25 14 L 27 12 L 25 10 L 27 8 L 24 3 Z" 
+          fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" stroke-linejoin="round"/>
     
-    <!-- Screen -->
-    <rect x="75" y="60" width="95" height="40" fill="#D0D0D0" rx="2"/>
+    <!-- Left screen -->
+    <rect x="9" y="7" width="14" height="6" fill="&stroke_color;" rx="1"/>
     
-    <!-- Red strip -->
-    <rect x="75" y="110" width="95" height="20" fill="#E85D75"/>
-    
-    <!-- Button rows -->
+    <!-- Left button grid -->
     <!-- Row 1 -->
-    <rect x="75" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    <rect x="125" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    
+    <rect x="9" y="16" width="6" height="4" fill="&stroke_color;" rx="1"/>
+    <rect x="17" y="16" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
     <!-- Row 2 -->
-    <rect x="75" y="190" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    <rect x="125" y="190" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    
+    <rect x="9" y="22" width="6" height="4" fill="&stroke_color;" rx="1"/>
+    <rect x="17" y="22" width="6" height="4" fill="&stroke_color;" rx="1"/>
     <!-- Row 3 -->
-    <rect x="75" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    <rect x="125" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    
+    <rect x="9" y="28" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="17" y="28" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
     <!-- Row 4 -->
-    <rect x="75" y="270" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    <rect x="125" y="270" width="40" height="30" fill="#B0B0B0" rx="2"/>
+    <rect x="9" y="34" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="17" y="34" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <!-- Row 5 -->
+    <rect x="9" y="40" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="17" y="40" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
   </g>
   
   <!-- Right calculator half -->
-  <g id="right-half" transform="rotate(5 250 200)">
-    <!-- Calculator body -->
-    <path d="M 195 80 L 210 100 L 200 120 L 210 140 L 200 160 L 210 180 L 200 200 L 210 220 L 200 240 L 210 260 L 200 280 L 210 300 L 200 320 L 220 340 L 340 340 L 340 40 L 220 40 Z" 
-          fill="#2E7CD6" stroke="#1A5490" stroke-width="4"/>
+  <g transform="translate(1,0) rotate(12 35 27.5)">
+    <!-- Right body with jagged edge -->
+    <path d="M 27 8 L 29 10 L 27 12 L 29 14 L 27 16 L 29 18 L 27 20 L 29 22 L 27 24 L 29 26 L 27 28 L 29 30 L 27 32 L 29 34 L 27 36 L 29 38 L 27 40 L 29 42 L 27 44 L 30 47 L 48 47 L 48 3 L 30 3 Z" 
+          fill="&fill_color;" stroke="&stroke_color;" stroke-width="3.5" stroke-linejoin="round"/>
     
-    <!-- Screen -->
-    <rect x="230" y="60" width="95" height="40" fill="#D0D0D0" rx="2"/>
+    <!-- Right screen -->
+    <rect x="32" y="7" width="14" height="6" fill="&stroke_color;" rx="1"/>
     
-    <!-- Button rows -->
+    <!-- Right button grid -->
     <!-- Row 1 -->
-    <rect x="235" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    <rect x="285" y="150" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    
+    <rect x="32" y="16" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="40" y="16" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
     <!-- Row 2 -->
-    <rect x="235" y="190" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    <rect x="285" y="190" width="40" height="30" fill="#4B3F8C" rx="2"/>
-    
+    <rect x="32" y="22" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="40" y="22" width="6" height="4" fill="&stroke_color;" rx="1"/>
     <!-- Row 3 -->
-    <rect x="235" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    <rect x="285" y="230" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    
+    <rect x="32" y="28" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="40" y="28" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
     <!-- Row 4 -->
-    <rect x="235" y="270" width="40" height="30" fill="#B0B0B0" rx="2"/>
-    <rect x="285" y="270" width="40" height="30" fill="#E85D75" rx="2"/>
-    
-    <!-- Row 5 -->
-    <rect x="235" y="310" width="90" height="20" fill="#4B3F8C" rx="2"/>
+    <rect x="32" y="34" width="6" height="4" fill="&fill_color;" stroke="&stroke_color;" stroke-width="1.5" rx="1"/>
+    <rect x="40" y="34" width="6" height="4" fill="&stroke_color;" rx="1"/>
+    <!-- Row 5 (wide button) -->
+    <rect x="32" y="40" width="14" height="4" fill="&stroke_color;" rx="1"/>
   </g>
+  
+  
 </svg>
