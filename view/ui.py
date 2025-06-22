@@ -1,3 +1,20 @@
+# This file is part of the Broken Calculator game.
+# Copyright (C) 2025 Bishoy Wadea
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 import gi
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
@@ -130,33 +147,42 @@ class CalculatorUI:
         )
 
     def _build_ui(self):
-        """Creates the main UI based on the original Calculate activity layout."""
-        self.main_grid = Gtk.Grid()
-        self.main_grid.set_name("main_window") # For CSS styling
-        self.main_grid.set_column_spacing(20)
-        self.main_grid.set_row_spacing(10)
-        self.main_grid.set_border_width(20)
-
-        # --- LEFT SIDE: The Calculator (Takes up ~60% of width) ---
+        """Creates the main UI with a 70/30 split using Gtk.Paned."""
+        # Create a horizontal paned container
+        self.main_paned = Gtk.Paned(orientation=Gtk.Orientation.HORIZONTAL)
+        self.main_paned.set_name("main_window")
+        self.main_paned.set_border_width(20)
+        self.main_paned.set_wide_handle(True)
+        
+        # Use the paned as the main container instead of grid
+        self.main_grid = self.main_paned  # Keep the name for compatibility
+        
+        # --- LEFT SIDE: The Calculator (70% of width) ---
         left_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
-        self.main_grid.attach(left_vbox, 0, 0, 2, 1)
+        left_vbox.set_hexpand(True)
+        left_vbox.set_vexpand(True)
+        left_vbox.set_margin_right(10)
 
         self.equation_display = Gtk.Label(label="0")
         self.equation_display.set_name("equation_display")
         self.equation_display.set_halign(Gtk.Align.END)
         self.equation_display.set_valign(Gtk.Align.CENTER)
+        self.equation_display.set_hexpand(True)
 
         display_frame = Gtk.Frame()
         display_frame.set_name("display_frame")
+        display_frame.set_hexpand(True)
         display_frame.add(self.equation_display)
         left_vbox.pack_start(display_frame, False, False, 10)
 
         self._build_calculator_pad(left_vbox)
 
-        # --- RIGHT SIDE: Game Information (Takes up ~40% of width) ---
+        # --- RIGHT SIDE: Game Information (30% of width) ---
         right_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=15)
         right_vbox.set_name("game_info_panel")
-        self.main_grid.attach(right_vbox, 2, 0, 1, 1)
+        right_vbox.set_hexpand(True)
+        right_vbox.set_vexpand(True)
+        right_vbox.set_margin_left(10)
 
         target_title = Gtk.Label(label="Target")
         target_title.get_style_context().add_class("title-label")
@@ -173,7 +199,14 @@ class CalculatorUI:
         equations_title = Gtk.Label(label="Your Equations")
         equations_title.get_style_context().add_class("title-label")
 
+        # Create scrolled window for equations
+        scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled_window.set_hexpand(True)
+        scrolled_window.set_vexpand(True)
+        
         self.equations_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+        scrolled_window.add(self.equations_vbox)
 
         right_vbox.pack_start(target_title, False, False, 0)
         right_vbox.pack_start(self.target_label, False, False, 10)
@@ -182,7 +215,19 @@ class CalculatorUI:
         right_vbox.pack_start(self.score_label, False, False, 10)
         right_vbox.pack_start(Gtk.Separator(), False, False, 10)
         right_vbox.pack_start(equations_title, False, False, 0)
-        right_vbox.pack_start(self.equations_vbox, True, True, 0)
+        right_vbox.pack_start(scrolled_window, True, True, 0)
+
+        # Add panels to the paned container
+        self.main_paned.pack1(left_vbox, resize=True, shrink=False)
+        self.main_paned.pack2(right_vbox, resize=True, shrink=False)
+        
+        # Set the position to achieve 70/30 split
+        def set_paned_position(widget):
+            allocation = widget.get_allocation()
+            widget.set_position(int(allocation.width * 0.7))  # Changed from 0.6 to 0.7
+        
+        self.main_paned.connect('realize', set_paned_position)
+        self.main_paned.connect('size-allocate', lambda w, a: set_paned_position(w))
 
     def _build_calculator_pad(self, parent_box):
         """Creates and lays out the calculator buttons with complex sizes."""

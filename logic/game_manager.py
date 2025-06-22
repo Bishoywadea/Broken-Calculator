@@ -1,3 +1,19 @@
+# This file is part of the Broken Calculator game.
+# Copyright (C) 2025 Bishoy Wadea
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import random
 from logic.equation_validator import EquationValidator
@@ -13,28 +29,18 @@ class GameManager:
         
         # Game state variables
         self.target_number = 0
-        self.difficulty = "none"
         self.equations = []
         self.current_equation = ""
         self.total_score = 0
         self.game_completed = False
         self.broken_buttons = []
         
-    def start_level(self, difficulty):
-        """Start a new game with selected difficulty. This now only sets up data."""
-        self.difficulty = difficulty
+    def start_level(self):
+        """Start a new game. This now only sets up data."""
         
-        # Generate target number based on difficulty
-        if difficulty == "easy":
-            self.target_number = random.randint(10, 50)
-            broken_count = 3
-        elif difficulty == "medium":
-            self.target_number = random.randint(50, 100)
-            broken_count = 5
-        else:  # hard
-            self.target_number = random.randint(100, 200)
-            broken_count = 7
-        
+        self.target_number = random.randint(10, 200)
+        broken_count = random.randint(3, 7)
+    
         # Generate broken buttons
         # Assuming generate_broken_buttons does not use Pygame
         self.broken_buttons = self.broken_validator.generate_broken_buttons(
