@@ -16,8 +16,10 @@
 # Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 import gi
+
 gi.require_version("Gtk", "3.0")
 from gi.repository import Gtk, Gdk
+
 
 class CalculatorUI:
     """
@@ -27,6 +29,7 @@ class CalculatorUI:
     It holds references to all widgets that need to be dynamically updated
     by the main activity logic.
     """
+
     def __init__(self):
         # --- Publicly accessible widgets ---
         self.main_grid = None
@@ -48,7 +51,7 @@ class CalculatorUI:
         #main_window {
             background-color: #1e1e1e; /* A very dark grey/black */
         }
-        
+
         /* Calculator Display Style */
         #display_frame {
             background-color: #f0f0f0;
@@ -62,7 +65,7 @@ class CalculatorUI:
             font-size: 36pt;
             font-weight: bold;
         }
-        
+
         /* General Button Style */
         button {
             border: none;
@@ -72,7 +75,7 @@ class CalculatorUI:
             color: white;
             transition: all 0.1s ease-in-out;
         }
-        
+
         button:hover {
              background-image: image(rgba(255, 255, 255, 0.1));
         }
@@ -96,7 +99,7 @@ class CalculatorUI:
             background-color: #d4d4d2;
             color: black;
         }
-        
+
         button:disabled {
             background-color: #404040;
             color: #707070;
@@ -109,31 +112,31 @@ class CalculatorUI:
             border: 2px solid #ff4d4d; /* Red border */
             text-decoration-line: line-through;
         }
-        
+
         /* Game Info Panel on the right */
         #game_info_panel {
             background-color: #e0e0e0;
             border-radius: 12px;
             padding: 15px;
         }
-        
+
         .title-label {
             font-size: 18pt;
             font-weight: bold;
             color: #333;
         }
-        
+
         #target_label {
             font-size: 48pt;
             font-weight: bold;
             color: #000;
         }
-        
+
         #score_label {
             font-size: 24pt;
             color: #4CAF50; /* Green color for score */
         }
-        
+
         .equation-entry {
             font-size: 12pt;
             color: #555;
@@ -143,7 +146,7 @@ class CalculatorUI:
         Gtk.StyleContext.add_provider_for_screen(
             Gdk.Screen.get_default(),
             css_provider,
-            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION
+            Gtk.STYLE_PROVIDER_PRIORITY_APPLICATION,
         )
 
     def _build_ui(self):
@@ -153,10 +156,10 @@ class CalculatorUI:
         self.main_paned.set_name("main_window")
         self.main_paned.set_border_width(20)
         self.main_paned.set_wide_handle(True)
-        
+
         # Use the paned as the main container instead of grid
         self.main_grid = self.main_paned  # Keep the name for compatibility
-        
+
         # --- LEFT SIDE: The Calculator (70% of width) ---
         left_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=10)
         left_vbox.set_hexpand(True)
@@ -201,11 +204,13 @@ class CalculatorUI:
 
         # Create scrolled window for equations
         scrolled_window = Gtk.ScrolledWindow()
-        scrolled_window.set_policy(Gtk.PolicyType.NEVER, Gtk.PolicyType.AUTOMATIC)
+        scrolled_window.set_policy(Gtk.PolicyType.NEVER,
+                                   Gtk.PolicyType.AUTOMATIC)
         scrolled_window.set_hexpand(True)
         scrolled_window.set_vexpand(True)
-        
-        self.equations_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=5)
+
+        self.equations_vbox = Gtk.Box(orientation=Gtk.Orientation.VERTICAL,
+                                      spacing=5)
         scrolled_window.add(self.equations_vbox)
 
         right_vbox.pack_start(target_title, False, False, 0)
@@ -220,14 +225,15 @@ class CalculatorUI:
         # Add panels to the paned container
         self.main_paned.pack1(left_vbox, resize=True, shrink=False)
         self.main_paned.pack2(right_vbox, resize=True, shrink=False)
-        
+
         # Set the position to achieve 70/30 split
         def set_paned_position(widget):
             allocation = widget.get_allocation()
-            widget.set_position(int(allocation.width * 0.7))  # Changed from 0.6 to 0.7
-        
-        self.main_paned.connect('realize', set_paned_position)
-        self.main_paned.connect('size-allocate', lambda w, a: set_paned_position(w))
+            widget.set_position(int(allocation.width * 0.7))
+
+        self.main_paned.connect("realize", set_paned_position)
+        self.main_paned.connect("size-allocate", lambda w,
+                                a: set_paned_position(w))
 
     def _build_calculator_pad(self, parent_box):
         """Creates and lays out the calculator buttons with complex sizes."""
@@ -239,21 +245,35 @@ class CalculatorUI:
         parent_box.pack_start(pad_grid, True, True, 0)
 
         button_layout = [
-            ['C', 'C', 0, 0, 2, 1, 'btn-clear'], ['⌫', 'backspace', 2, 0, 2, 1, 'btn-op'],
-            ['7', '7', 0, 1, 1, 1, 'btn-num'], ['8', '8', 1, 1, 1, 1, 'btn-num'], ['9', '9', 2, 1, 1, 1, 'btn-num'], ['÷', '/', 3, 1, 1, 1, 'btn-op'],
-            ['4', '4', 0, 2, 1, 1, 'btn-num'], ['5', '5', 1, 2, 1, 1, 'btn-num'], ['6', '6', 2, 2, 1, 1, 'btn-num'], ['×', '*', 3, 2, 1, 1, 'btn-op'],
-            ['1', '1', 0, 3, 1, 1, 'btn-num'], ['2', '2', 1, 3, 1, 1, 'btn-num'], ['3', '3', 2, 3, 1, 1, 'btn-num'], ['-', '-', 3, 3, 1, 1, 'btn-op'],
-            ['0', '0', 0, 4, 2, 1, 'btn-num'], ['.', '.', 2, 4, 1, 1, 'btn-num'], ['+', '+', 3, 4, 1, 1, 'btn-op'],
-            ['(', '(', 0, 5, 1, 1, 'btn-op'], [')', ')', 1, 5, 1, 1, 'btn-op'], ['=', '=', 2, 5, 2, 1, 'btn-clear']
+            ["C", "C", 0, 0, 2, 1, "btn-clear"],
+            ["⌫", "backspace", 2, 0, 2, 1, "btn-op"],
+            ["7", "7", 0, 1, 1, 1, "btn-num"],
+            ["8", "8", 1, 1, 1, 1, "btn-num"],
+            ["9", "9", 2, 1, 1, 1, "btn-num"],
+            ["÷", "/", 3, 1, 1, 1, "btn-op"],
+            ["4", "4", 0, 2, 1, 1, "btn-num"],
+            ["5", "5", 1, 2, 1, 1, "btn-num"],
+            ["6", "6", 2, 2, 1, 1, "btn-num"],
+            ["×", "*", 3, 2, 1, 1, "btn-op"],
+            ["1", "1", 0, 3, 1, 1, "btn-num"],
+            ["2", "2", 1, 3, 1, 1, "btn-num"],
+            ["3", "3", 2, 3, 1, 1, "btn-num"],
+            ["-", "-", 3, 3, 1, 1, "btn-op"],
+            ["0", "0", 0, 4, 2, 1, "btn-num"],
+            [".", ".", 2, 4, 1, 1, "btn-num"],
+            ["+", "+", 3, 4, 1, 1, "btn-op"],
+            ["(", "(", 0, 5, 1, 1, "btn-op"],
+            [")", ")", 1, 5, 1, 1, "btn-op"],
+            ["=", "=", 2, 5, 2, 1, "btn-clear"],
         ]
 
-        for (text, value, c, r, w, h, style) in button_layout:
+        for text, value, c, r, w, h, style in button_layout:
             button = Gtk.Button(label=text)
             button.set_hexpand(True)
             button.set_vexpand(True)
             button.get_style_context().add_class(style)
 
             button.game_value = value
-            
+
             pad_grid.attach(button, c, r, w, h)
             self.buttons[value] = button

@@ -4,3 +4,4 @@
 dist/
 locale/
 __pycache__/
+.vscode/
