@@ -30,14 +30,17 @@ from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.activity.widgets import StopButton
 
+import sugargame.canvas
+import main as main
 from logic.game_manager import GameManager
 from view.ui import CalculatorUI
+from gettext import gettext as _
 
 class BrokenCalculator(Activity):
     def __init__(self, handle):
-        # super(BrokenCalculator, self).__init__(handle)
         Activity.__init__(self, handle)
 
+        self.main_instance = main.main()
         self.game = GameManager()
 
         self.ui = CalculatorUI()
@@ -45,9 +48,9 @@ class BrokenCalculator(Activity):
         self.build_toolbar()
 
         self.set_canvas(self.ui.main_grid)
-        
-        self._connect_signals()
+        self.main_instance.set_activity(self)
 
+        self._connect_signals()
         self._on_new_game_clicked(None)
 
     def build_toolbar(self):
@@ -81,7 +84,8 @@ class BrokenCalculator(Activity):
 
     def _on_button_clicked(self, button):
         value = button.game_value
-        if self.game.game_completed: return
+        if self.game.game_completed:
+            return
 
         if value == 'C':
             self.game.current_equation = ""
@@ -132,14 +136,30 @@ class BrokenCalculator(Activity):
         self.show_all()
 
     def _show_error_dialog(self, message):
-        dialog = Gtk.MessageDialog(parent=self.get_toplevel(), flags=0, message_type=Gtk.MessageType.ERROR, buttons=Gtk.ButtonsType.OK, text="Invalid Equation")
+        dialog = Gtk.MessageDialog(
+            parent=self.get_toplevel(), 
+            flags=0, 
+            message_type=Gtk.MessageType.ERROR, 
+            buttons=Gtk.ButtonsType.OK, 
+            text=_("Invalid Equation")
+        )
         dialog.format_secondary_text(message)
         dialog.run()
         dialog.destroy()
 
     def _show_completion_dialog(self):
-        dialog = Gtk.MessageDialog(parent=self.get_toplevel(), flags=0, message_type=Gtk.MessageType.INFO, buttons=Gtk.ButtonsType.OK, text="Excellent Work!")
-        dialog.format_secondary_text(f"Final Score: {self.game.total_score}\n\nClick OK to start a new game.")
+        dialog = Gtk.MessageDialog(
+            parent=self.get_toplevel(), 
+            flags=0, 
+            message_type=Gtk.MessageType.INFO, 
+            buttons=Gtk.ButtonsType.OK, 
+            text=_("Excellent Work!")
+        )
+        dialog.format_secondary_text(
+            _("Final Score: {score}\n\nClick OK to start a new game.").format(
+                score=self.game.total_score
+            )
+        )
         dialog.run()
         dialog.destroy()
         self._on_new_game_clicked(None)
@@ -166,5 +186,6 @@ class BrokenCalculator(Activity):
     def write_file(self, file_path):
         self.game.write_file(file_path)
 
-    def close(self, *args, **kwargs):
-        super(BrokenCalculator, self).close(*args, **kwargs)
+    def close(self):
+        if self.main_instance:
+            self.main_instance.quit()
