@@ -181,11 +181,7 @@ class BrokenCalculator(Activity):
         self._update_ui_from_gamestate()
 
     def read_file(self, file_path):
-        self.game.read_file(file_path)
+        pass
 
     def write_file(self, file_path):
-        self.game.write_file(file_path)
-
-    def close(self):
-        if self.main_instance:
-            self.main_instance.quit()
+        pass

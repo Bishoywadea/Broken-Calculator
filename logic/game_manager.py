@@ -105,3 +105,11 @@ class GameManager:
     def complete_game(self):
         """Handle game completion. This now only sets the state flag."""
         self.game_completed = True
+
+    def write_file(filename):
+        """Write game state to a file."""
+        pass
+
+    def read_file(filename):
+        """Read game state from a file."""
+        pass
