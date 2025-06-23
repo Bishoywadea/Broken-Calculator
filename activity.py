@@ -25,7 +25,6 @@ from sugar3.graphics.toolbarbox import ToolbarBox
 from sugar3.activity.widgets import ActivityToolbarButton
 from sugar3.activity.widgets import StopButton
 
-import main as main
 from logic.game_manager import GameManager
 from view.ui import CalculatorUI
 from gettext import gettext as _
@@ -35,7 +34,6 @@ class BrokenCalculator(Activity):
     def __init__(self, handle):
         Activity.__init__(self, handle)
 
-        self.main_instance = main.main()
         self.game = GameManager()
 
         self.ui = CalculatorUI()
@@ -43,7 +41,6 @@ class BrokenCalculator(Activity):
         self.build_toolbar()
 
         self.set_canvas(self.ui.main_grid)
-        self.main_instance.set_activity(self)
 
         self._connect_signals()
         self._on_new_game_clicked(None)
@@ -75,9 +72,10 @@ class BrokenCalculator(Activity):
         toolbar_box.toolbar.insert(stop_button, -1)
 
     def _on_help_clicked(self, button):
-        """Handle help button click."""
-        if hasattr(self.main_instance, 'toggle_help'):
-            self.main_instance.toggle_help()
+        """Show the help dialog when help button is clicked."""
+        dialog = HelpDialog(self.get_toplevel())
+        dialog.run()
+        dialog.destroy()
 
     def _connect_signals(self):
         """Connects widget signals to their handler methods."""
@@ -201,3 +199,55 @@ class BrokenCalculator(Activity):
 
     def write_file(self, file_path):
         pass
+
+class HelpDialog(Gtk.Dialog):
+    def __init__(self, parent):
+        Gtk.Dialog.__init__(
+            self,
+            title="Broken Calculator Help",
+            transient_for=parent,
+            flags=0,
+        )
+        self.set_default_size(450, 400)
+        
+        # Add buttons
+        self.add_buttons(Gtk.STOCK_OK, Gtk.ResponseType.OK)
+        
+        # Create the content area
+        box = self.get_content_area()
+        
+        # Create a scrolled window
+        scrolled_window = Gtk.ScrolledWindow()
+        scrolled_window.set_policy(
+            Gtk.PolicyType.NEVER, 
+            Gtk.PolicyType.AUTOMATIC
+        )
+        box.pack_start(scrolled_window, True, True, 0)
+        
+        # Create the help text
+        help_text = """
+        <span size='x-large' weight='bold'>Broken Calculator Rules:</span>
+
+        <span size='large'>
+        1. Create 5 different equations that equal the target.
+        2. Use +, -, ×, ÷ operations.
+        3. Each equation must be unique.
+        4. More complex equations score higher!
+        
+        <b>Broken Buttons:</b>
+        Some buttons will be broken (red color). 
+        You must find ways to reach the target without using them.
+        </span>
+        """
+        
+        label = Gtk.Label()
+        label.set_markup(help_text)
+        label.set_line_wrap(True)
+        label.set_margin_start(20)
+        label.set_margin_end(20)
+        label.set_margin_top(20)
+        label.set_margin_bottom(20)
+        
+        scrolled_window.add(label)
+        
+        self.show_all()

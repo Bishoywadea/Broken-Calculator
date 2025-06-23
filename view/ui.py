@@ -141,6 +141,21 @@ class CalculatorUI:
             font-size: 12pt;
             color: #555;
         }
+
+        /* Help Dialog Styles */
+        help-dialog {
+            background-color: #f5f5f5;
+        }
+
+        help-dialog label {
+            color: #333;
+        }
+
+        help-dialog scrolledwindow {
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin: 10px;
+        }
         """
         css_provider.load_from_data(css)
         Gtk.StyleContext.add_provider_for_screen(
