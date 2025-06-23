@@ -58,7 +58,7 @@ class BrokenCalculator(Activity):
         self.new_game_button = new_game_button
         toolbar_box.toolbar.insert(new_game_button, -1)
 
-        help_button = Gtk.ToolButton(icon_name="help-about")
+        help_button = Gtk.ToolButton(icon_name="toolbar-help")
         help_button.set_tooltip_text("Help")
         help_button.connect("clicked", self._on_help_clicked)
         toolbar_box.toolbar.insert(help_button, -1)
